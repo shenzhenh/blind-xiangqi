@@ -1,0 +1,10 @@
+node_modules/
+.edge-profile*/
+.pnpm-store/
+.DS_Store
+shots/crop-*.png
+shots/hello*
+__pycache__/
+*.pyc
+.pytest_cache/
+tools/

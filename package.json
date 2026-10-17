@@ -1,0 +1,21 @@
+{
+  "name": "blind-xiangqi",
+  "version": "1.11.0",
+  "private": true,
+  "description": "盲棋象棋 Blind Xiangqi — spec v1.11：PvE 前端本地 / PvP Python 后端；简化吃子记录、无蓝闪、首页人机居中",
+  "scripts": {
+    "test": "node tests/engine.test.cjs",
+    "test:ai": "node tests/ai.test.cjs",
+    "test:visual": "node tests/visual.test.cjs",
+    "test:ui": "node tests/ui.test.cjs",
+    "test:all": "node tests/engine.test.cjs && node tests/ai.test.cjs && node tests/visual.test.cjs && node tests/ui.test.cjs",
+    "selfplay": "node scripts/selfplay.mjs",
+    "preview": "node scripts/render-preview.cjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.0.11",
+    "@napi-rs/canvas-win32-x64-msvc": "1.0.11",
+    "jsdom": "^30.1.3"
+  }
+}

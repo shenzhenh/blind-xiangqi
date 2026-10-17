@@ -1,0 +1,131 @@
+{
+  "generatedAt": "2026-10-17T11:21:54.647Z",
+  "specVersion": "v1.4",
+  "games": 1000,
+  "maxPly": 400,
+  "random": {
+    "games": 1000,
+    "redWinRate": 0.285,
+    "blackWinRate": 0.274,
+    "drawRate": 0.094,
+    "unfinishedRate": 0.347,
+    "redScore": 0.5055,
+    "redScoreSE": 0.011826225501385013,
+    "avgPly": 263.865,
+    "medianPly": 301,
+    "avgMovesPerGame": 263.865,
+    "flipsPerGame": 22.198,
+    "hiddenMoveRate": 0.08412635249085706,
+    "capturesPerGame": 20.134,
+    "friendlyFirePerGame": 3.936,
+    "friendlyFireRate": 0.1954902155557763,
+    "selfChecksPerGame": 0.864,
+    "selfCheckRate": 0.0032744016826786425,
+    "checksPerGame": 10.3,
+    "avgOperable": 9.488367751507958,
+    "avgLegalMoves": 29.004086484823564,
+    "avgMsPerGame": 19.591,
+    "reasons": {
+      "NO_CAPTURE": 61,
+      "CHECKMATE": 524,
+      "PLY_LIMIT": 347,
+      "REPETITION": 33,
+      "STALEMATE": 35
+    }
+  },
+  "greedy": {
+    "games": 1000,
+    "redWinRate": 0.314,
+    "blackWinRate": 0.308,
+    "drawRate": 0.378,
+    "unfinishedRate": 0,
+    "redScore": 0.503,
+    "redScoreSE": 0.012475842522517183,
+    "avgPly": 134.498,
+    "medianPly": 122,
+    "avgMovesPerGame": 134.498,
+    "flipsPerGame": 16.684,
+    "hiddenMoveRate": 0.12404645422236762,
+    "capturesPerGame": 25.665,
+    "friendlyFirePerGame": 7.586,
+    "friendlyFireRate": 0.29557763491135786,
+    "selfChecksPerGame": 0.35,
+    "selfCheckRate": 0.0026022691787238473,
+    "checksPerGame": 3.667,
+    "avgOperable": 6.189626736639504,
+    "avgLegalMoves": 19.219573633893404,
+    "avgMsPerGame": 6.566,
+    "reasons": {
+      "STALEMATE": 418,
+      "CHECKMATE": 204,
+      "REPETITION": 269,
+      "NO_CAPTURE": 109
+    }
+  },
+  "seedVariance": {
+    "seeds": 100,
+    "playoutsPerSeed": 5,
+    "meanRedScore": 0.5410000000000003,
+    "sdAcrossSeeds": 0.16397523833761854,
+    "minSeedScore": 0.1,
+    "maxSeedScore": 0.9,
+    "samples": [
+      {
+        "seed": "var-0",
+        "redScore": 0.3,
+        "scores": [
+          0,
+          1,
+          0,
+          0.5,
+          0
+        ]
+      },
+      {
+        "seed": "var-1",
+        "redScore": 0.9,
+        "scores": [
+          1,
+          1,
+          1,
+          1,
+          0.5
+        ]
+      },
+      {
+        "seed": "var-2",
+        "redScore": 0.5,
+        "scores": [
+          0.5,
+          0.5,
+          1,
+          0,
+          0.5
+        ]
+      },
+      {
+        "seed": "var-3",
+        "redScore": 0.6,
+        "scores": [
+          0.5,
+          0.5,
+          1,
+          0,
+          1
+        ]
+      },
+      {
+        "seed": "var-4",
+        "redScore": 0.5,
+        "scores": [
+          0,
+          1,
+          0.5,
+          0.5,
+          0.5
+        ]
+      }
+    ]
+  },
+  "elapsedMs": 35716
+}

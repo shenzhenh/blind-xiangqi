@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#17130f" />
+  <meta name="description" content="盲棋象棋 Blind Xiangqi：30 枚棋子红黑混洗、背面朝上，暗子按所在位置的默认棋子行动，首次移动翻面。双方信息完全对称的中国象棋变体。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23a93226'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23fdeee1' font-family='serif'%3E%E7%9B%B2%3C/text%3E%3C/svg%3E" />
+  <title>盲棋象棋 · Blind Xiangqi</title>
+  <meta name="color-scheme" content="dark" />
+  <style>html,body{background:#17130f;color-scheme:dark;}</style>
+  <script>
+    try {
+      if (new URLSearchParams(location.search).get('autostart') === '1') {
+        document.documentElement.classList.add('autostart-pending');
+      }
+    } catch (err) { /* ignore */ }
+  </script>
+  <style>
+    html.autostart-pending #homeScreen { display: none !important; }
+    html.autostart-pending body { background: #17130f; }
+  </style>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="app home-active" id="app">
+    <noscript>
+      <p style="padding:16px;color:#efe3cf">本游戏需要启用 JavaScript 才能运行。</p>
+    </noscript>
+
+    <!-- ============================ 开始界面 ============================ -->
+    <section class="home" id="homeScreen" aria-labelledby="homeTitle">
+      <div class="home-inner">
+        <div class="home-hero">
+          <div class="home-seal" aria-hidden="true">盲</div>
+          <p class="home-kicker">BLIND XIANGQI</p>
+          <h1 id="homeTitle">盲棋象棋</h1>
+          <p class="home-slogan">双方都看不见自己棋子的象棋</p>
+          <p class="home-sub">30 枚棋子红黑混洗、背面朝上；按所在格子的默认棋子行动，第一次移动才翻面。</p>
+        </div>
+
+        <div class="home-actions">
+          <button class="home-start" id="startBtn" type="button">人机对战</button>
+          <button class="home-config" id="homeConfigBtn" type="button" aria-haspopup="dialog">
+            <span id="homeConfigSummary">人机对战 · 进阶 · 执红</span>
+            <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="home-secondary">
+            <button class="btn" id="homeHotseatBtn" type="button">同屏双人</button>
+            <button class="btn" id="homeOnlineBtn" type="button">联机对战</button>
+          </div>
+          <button class="home-continue" id="homeContinueBtn" type="button" hidden></button>
+        </div>
+
+        <footer class="home-footer">
+          <button class="linklike" id="homeRulesBtn" type="button">规则</button>
+          <span aria-hidden="true">·</span>
+          <button class="linklike" id="homeAboutBtn" type="button">关于</button>
+          <span class="home-version">v1.11</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ============================ 顶栏 ============================ -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">盲</div>
+        <div class="brand-text">
+          <h1>盲棋象棋</h1>
+          <p>Blind Xiangqi · 归属未知</p>
+        </div>
+      </div>
+
+      <div class="badge-row">
+        <span class="mode-badge" id="modeBadge">人机 · 进阶</span>
+        <span class="ai-badge" id="aiBadge">AI 不偷看</span>
+      </div>
+
+      <div class="turnbar">
+        <span class="turn-dot" id="turnDot" aria-hidden="true"></span>
+        <strong id="turnText">红方行棋</strong>
+        <span class="sep" aria-hidden="true"></span>
+        <span id="plyText">第 1 手</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span id="clockText" title="本局用时">00:00</span>
+      </div>
+
+      <div class="top-right">
+        <span class="ai-slot">
+          <span class="ai-thinking" id="aiThinking" hidden>
+            AI 思考中<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          </span>
+        </span>
+        <span class="check-pill" id="checkPill" role="status" aria-live="polite" hidden></span>
+        <button class="icon-btn" id="rulesBtn" type="button">规则</button>
+      </div>
+    </header>
+
+    <!-- ============================ 舞台 ============================ -->
+    <main class="stage">
+      <section class="board-pane" id="boardPane">
+        <div class="board-frame" id="boardFrame">
+          <canvas id="board" aria-label="盲棋象棋棋盘"></canvas>
+          <div class="a11y-grid" id="a11yGrid" role="grid" aria-label="棋盘：方向键移动，回车选中或落子"></div>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </div>
+        <div class="capture-strip" id="captureStrip" role="log" aria-label="吃子记录（常驻）"></div>
+        <div class="replay-bar" id="replayBar" hidden>
+          <span id="replayText">回放</span>
+          <button type="button" id="replayPrev" aria-label="上一步">◀</button>
+          <button type="button" id="replayNext" aria-label="下一步">▶</button>
+          <button type="button" id="replayClose">返回当前局面</button>
+        </div>
+        <div class="hintbar" id="hintbar"></div>
+      </section>
+
+      <!-- ============================ 侧栏 ============================ -->
+      <aside class="side-panel" id="sidePanel" aria-label="对局信息">
+        <section class="card capture-card">
+          <h2 class="card-title">吃子记录 <span class="capture-badge">常驻</span></h2>
+          <div class="capture-feed" id="captureFeed" role="log" aria-label="吃子记录"></div>
+        </section>
+
+        <section class="card">
+          <h2 class="card-title">对局信息</h2>
+          <div class="stat-grid">
+            <span></span><span class="head red">红方</span><span class="head black">黑方</span>
+            <span class="row-label">明子</span><span class="num" id="redUp">1</span><span class="num" id="blackUp">1</span>
+            <span class="row-label">表观暗子</span><span class="num" id="redHidden">15</span><span class="num" id="blackHidden">15</span>
+            <span class="row-label">被吃</span><span class="num" id="redLost">0</span><span class="num" id="blackLost">0</span>
+          </div>
+          <div class="trays">
+            <div class="tray-row">
+              <span class="tray-label">红方损失</span>
+              <div class="tray-chips" id="redTray"><span class="tray-empty">—</span></div>
+            </div>
+            <div class="tray-row">
+              <span class="tray-label">黑方损失</span>
+              <div class="tray-chips" id="blackTray"><span class="tray-empty">—</span></div>
+            </div>
+          </div>
+          <div class="meta-line">
+            <span id="modeText">双人热座</span>
+            <code id="seedText">seed —</code>
+          </div>
+        </section>
+
+        <section class="card grow">
+          <h2 class="card-title">走子记录</h2>
+          <div class="log-list" id="logList" aria-label="走子记录"></div>
+          <div class="meta-line">
+            <span id="recordHint">点击任一条目可回看局面</span>
+            <span id="countText">0 手</span>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- ============================ 底栏 ============================ -->
+    <footer class="bottombar">
+      <button class="btn" id="homeBtn" type="button">返回首页</button>
+      <button class="btn primary" id="newBtn" type="button">新局</button>
+      <button class="btn" id="undoBtn" type="button" hidden>悔棋</button>
+      <button class="btn danger" id="resignBtn" type="button">认输</button>
+      <button class="btn" id="drawBtn" type="button">求和</button>
+      <button class="btn" id="markBtn" type="button" aria-pressed="false">标记</button>
+      <button class="btn" id="hintBtn" type="button">提示 3</button>
+      <span class="bar-sep" aria-hidden="true"></span>
+      <div class="mode-group">
+        <label class="mini-field">
+          <span class="sr-only">对战模式</span>
+          <select id="modeSelect" aria-label="对战模式">
+            <option value="pve">人机</option>
+            <option value="hotseat">同屏</option>
+          </select>
+        </label>
+        <label class="mini-field">
+          <span class="sr-only">AI 难度</span>
+          <select id="difficultySelect" aria-label="AI 难度">
+            <option value="easy">入门</option>
+            <option value="normal">进阶</option>
+            <option value="hard">高手</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn mobile-only" id="panelBtn" type="button">记录</button>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="soundBtn" type="button" aria-pressed="true">音效</button>
+      <button class="btn ghost" id="helpBtn" type="button">规则</button>
+    </footer>
+  </div>
+
+  <!-- ============================ 结算 ============================ -->
+  <dialog id="resultDialog">
+    <div class="modal">
+      <div class="result-head">
+        <h2 id="resultTitle">对局结束</h2>
+        <span class="reason" id="resultReason"></span>
+      </div>
+      <p class="sub" id="resultSub"></p>
+      <div class="result-stats" id="resultStats"></div>
+      <div class="reveal-grid" id="revealGrid"></div>
+      <div class="actions">
+        <button class="btn" id="copyBtn" type="button">复制战报</button>
+        <button class="btn" id="closeResult" type="button">看棋盘</button>
+        <button class="btn" id="homeFromResult" type="button">返回首页</button>
+        <button class="btn primary" id="againBtn" type="button">再来一局</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================ 新局 / 设置 ============================ -->
+  <dialog id="newDialog">
+    <div class="modal narrow">
+      <h2>开始新局</h2>
+      <p class="sub">同一 seed 会复现完全相同的开局摆法。</p>
+      <div class="field-row">
+        <label for="modeInput">对战模式<span class="hint">默认人机；同屏为双人热座</span></label>
+        <select id="modeInput">
+          <option value="pve">人机对战</option>
+          <option value="hotseat">同屏双人</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="sideInput">玩家执方<span class="hint">AI 执另一方；随机则开局决定</span></label>
+        <select id="sideInput">
+          <option value="red">红方（先手）</option>
+          <option value="black">黑方（后手）</option>
+          <option value="random">随机</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="difficultyInput">AI 难度<span class="hint">入门 4 样本 / 进阶 32 / 高手 128</span></label>
+        <select id="difficultyInput">
+          <option value="easy">入门</option>
+          <option value="normal">进阶</option>
+          <option value="hard">高手</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="honestyInput">AI 诚实度<span class="hint warn">“全知”会读取暗子身份，仅作高压陪练且不计分</span></label>
+        <select id="honestyInput">
+          <option value="honest">诚实（不偷看）</option>
+          <option value="oracle">全知（会偷看）</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="seedInput">随机种子<span class="hint">留空则自动生成</span></label>
+        <input id="seedInput" type="text" autocomplete="off" spellcheck="false" placeholder="自动" />
+      </div>
+      <div class="field-row">
+        <label for="balanceSelect">发牌平衡<span class="hint">fair：双方开局强子数差 ≤ 2</span></label>
+        <select id="balanceSelect">
+          <option value="none">纯随机（默认）</option>
+          <option value="fair">平衡 Fair</option>
+          <option value="mirror">镜像 Mirror</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="strictToggle">严格模式<span class="hint warn">拒绝“翻面送将”；会引入免费探测，仅限单机娱乐</span></label>
+        <span class="switch"><input id="strictToggle" type="checkbox" /><span></span></span>
+      </div>
+      <div class="field-row">
+        <label for="undoToggle">允许悔棋<span class="hint">竞技模式应关闭：可用“悔棋-再走”反复试探</span></label>
+        <span class="switch"><input id="undoToggle" type="checkbox" /><span></span></span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="newCancel" type="button">取消</button>
+        <button class="btn primary" id="newStart" type="button">开始新局</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================ 首页配置（底部弹层） ============================ -->
+  <dialog id="homeConfigDialog">
+    <div class="modal narrow config-sheet">
+      <h2>对局配置</h2>
+      <p class="sub">配置会记住；下次启动沿用。</p>
+      <div class="field-row">
+        <label for="homeModeInput">对战模式</label>
+        <select id="homeModeInput">
+          <option value="pve">人机对战</option>
+          <option value="hotseat">同屏双人</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="homeDifficultyInput">AI 难度<span class="hint">仅人机对战生效</span></label>
+        <select id="homeDifficultyInput">
+          <option value="easy">入门</option>
+          <option value="normal">进阶</option>
+          <option value="hard">高手</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label for="homeSideInput">玩家执方<span class="hint">AI 执另一方</span></label>
+        <select id="homeSideInput">
+          <option value="red">红方（先手）</option>
+          <option value="black">黑方（后手）</option>
+          <option value="random">随机</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="homeConfigDone" type="button">完成</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================ 关于 / 联机占位 ============================ -->
+  <dialog id="aboutDialog">
+    <div class="modal narrow">
+      <h2>关于盲棋象棋</h2>
+      <p class="sub">v1.11 · 规则 spec v1.11</p>
+      <p class="about-copy">中国象棋变体。开局除将帅外 30 枚棋子红黑混洗、背面朝上；暗子按所在格子的默认棋子行动，第一次移动才翻面。双方信息完全对称。</p>
+      <p class="about-copy">实现：纯前端规则引擎 + Canvas 2D + 本地 PIMC 人机 AI。联机方案见 spec §18，服务端尚未接入。</p>
+      <div class="actions"><button class="btn primary" id="aboutClose" type="button">返回</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="onlineDialog">
+    <div class="modal narrow">
+      <h2>联机对战</h2>
+      <p class="sub">M4 · 设计已定，服务端未接入</p>
+      <p class="about-copy">spec §18 已给出服务端权威、房间码、重连、时钟与反作弊方案；本版本仍是本地人机 / 同屏。联机入口保留，避免首页出现“死按钮”。</p>
+      <div class="actions"><button class="btn primary" id="onlineClose" type="button">知道了</button></div>
+    </div>
+  </dialog>
+
+  <!-- ============================ 规则 ============================ -->
+  <dialog id="rulesDialog">
+    <div class="modal">
+      <div id="rulesBody"></div>
+      <div class="rules-pager">
+        <button class="btn small" id="rulesPrev" type="button">上一页</button>
+        <div class="rules-dots" id="rulesDots"></div>
+        <button class="btn small primary" id="rulesNext" type="button">下一页</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="src/engine.js"></script>
+  <script src="src/visual.js"></script>
+  <script src="src/ai.js"></script>
+  <script src="src/ui.js"></script>
+</body>
+</html>

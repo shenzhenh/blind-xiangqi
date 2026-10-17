@@ -1,0 +1,7 @@
+# Python backend (M0/M1 target, spec v1.9 §20)
+fastapi>=0.115
+uvicorn[standard]>=0.30
+websockets>=15
+orjson>=3.10
+pytest>=8.0
+httpx>=0.28

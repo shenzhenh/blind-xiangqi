@@ -1,0 +1,119 @@
+/* Route-A H5: only layout/visual glue; no chess rules live here. */
+
+html, body { touch-action: manipulation; }
+
+#topbar[hidden], #stage[hidden], #bottombar[hidden] { display: none !important; }
+
+#board {
+  display: block;
+  border-radius: 16px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  /* src/styles.css disables canvas pointer events for the local overlay grid.
+     The PvP client has no overlay buttons, so the canvas itself must receive
+     mouse/touch input. */
+  pointer-events: auto !important;
+}
+.board-frame { -webkit-tap-highlight-color: transparent; outline: none; }
+
+.board-frame { flex: 0 0 auto; }
+.board-pane { justify-content: center; }
+
+#stage { min-height: 0; }
+
+.home-config { cursor: default !important; }
+.home-secondary .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.home-secondary { flex-wrap: wrap; }
+
+.web-note { color: var(--dim); font-size: 11px; }
+.web-error { color: #f0a08f; }
+#roomText { color: var(--gold-2); font-size: 11px; font-family: "SFMono-Regular", Consolas, monospace; }
+.net-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(230, 201, 143, 0.35);
+  color: var(--gold-2);
+  background: rgba(230, 201, 143, 0.08);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.net-pill.busy { animation: netPulse 1s ease-in-out infinite; }
+.net-pill.ok { color: #a8d5b5; border-color: rgba(168, 213, 181, 0.35); }
+.net-pill.bad { color: #f0a08f; border-color: rgba(240, 160, 143, 0.4); }
+@keyframes netPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+.difficulty-options { display: grid; gap: 8px; margin: 14px 0 6px; }
+.difficulty-option { justify-content: flex-start; min-height: 48px; text-align: left; font-size: 14px; }
+.difficulty-option.selected { border-color: var(--gold-2); background: rgba(201, 168, 106, 0.14); color: var(--gold-2); }
+.capture-body { align-items: center; row-gap: 3px; }
+.capture-group { padding: 7px 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.capture-group:last-child { border-bottom: 0; }
+.capture-group-head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 5px; color: var(--muted); }
+.capture-group.red .capture-group-head { color: #df8074; }
+.capture-group.black .capture-group-head { color: #c5d0d9; }
+.capture-group-count { color: var(--dim); min-width: 18px; text-align: center; font-variant-numeric: tabular-nums; }
+.capture-coins { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.capture-strip-group { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 2px 8px; border-radius: 8px; background: rgba(255,255,255,0.035); }
+.capture-group-label { color: var(--muted); font-size: 10.5px; white-space: nowrap; }
+.capture-strip-group .capture-coin { width: 18px; height: 18px; flex-basis: 18px; font-size: 12px; }
+.capture-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(110, 74, 36, 0.55);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 2px 3px rgba(0, 0, 0, 0.35);
+  font-family: "STKaiti", "KaiTi", "Songti SC", serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+.capture-coin.red { background: #fff6e7; color: #b23a2c; }
+.capture-coin.black { background: #fff6e7; color: #222a31; }
+.capture-coin.hidden {
+  background: #5c4634;
+  color: transparent;
+  border-color: rgba(230, 205, 170, 0.35);
+}
+.capture-coin.hidden::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 208, 174, 0.45);
+  box-shadow: 0 0 0 2px rgba(232, 208, 174, 0.18);
+}
+.capture-strip-item { display: inline-flex; align-items: center; gap: 4px; }
+#roomInput {
+  width: 150px;
+  min-height: 36px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 6px 10px;
+}
+
+@media (max-width: 1023px) {
+  .side-panel { display: none !important; }
+  .capture-strip { display: flex; }
+}
+
+@media (max-width: 620px) {
+  .bottombar { flex-wrap: wrap; overflow: visible; }
+}

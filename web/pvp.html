@@ -1,0 +1,128 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#17130f" />
+  <title>盲棋象棋 · 联机对战</title>
+  <meta name="color-scheme" content="dark" />
+  <style>html,body{background:#17130f;color-scheme:dark;}</style>
+  <link rel="stylesheet" href="/src/styles.css?v=19" />
+  <link rel="stylesheet" href="/client.css?v=19" />
+</head>
+<body>
+  <div class="app home-active" id="app">
+    <section class="home" id="homeScreen">
+      <div class="home-inner">
+        <div class="home-hero">
+          <div class="home-seal" aria-hidden="true">盲</div>
+          <p class="home-kicker">BLIND XIANGQI · SERVER</p>
+          <h1>盲棋象棋</h1>
+          <p class="home-slogan">双方都看不见自己棋子的象棋</p>
+          <p class="home-sub">服务器权威版 H5：客户端只拿 PublicState 与合法着法表，不携带规则引擎。</p>
+        </div>
+        <div class="home-actions">
+          <button class="home-start" id="onlineBtn" type="button">联机对战</button>
+          <div class="home-config" style="cursor:default">PvP · 6 位房间码 · 服务器裁判</div>
+          <div class="home-secondary">
+            <button class="btn" id="pveBtn" type="button">人机对战</button>
+            <button class="btn" id="healthBtn" type="button">检查服务</button>
+          </div>
+        </div>
+        <footer class="home-footer">
+          <span>PvP 后端 · PvE 前端</span>
+          <span class="home-version" id="healthText">未连接</span>
+        </footer>
+      </div>
+    </section>
+
+    <header class="topbar" id="topbar" hidden>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">盲</div>
+        <div class="brand-text"><h1>盲棋象棋</h1><p>Server-authoritative · PublicState only</p></div>
+      </div>
+      <div class="badge-row"><span class="mode-badge" id="modeBadge">PvP · 服务器权威</span></div>
+      <div class="turnbar">
+        <span class="turn-dot" id="turnDot" aria-hidden="true"></span>
+        <strong id="turnText">红方行棋</strong>
+        <span class="sep" aria-hidden="true"></span>
+        <span id="plyText">第 1 手</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span id="roomText"></span>
+        <span id="netStatus" class="net-pill" hidden></span>
+      </div>
+      <div class="top-right"><button class="icon-btn" id="newBtn" type="button">离开</button></div>
+    </header>
+
+    <main class="stage" id="stage" hidden>
+      <section class="board-pane" id="boardPane">
+        <div class="board-frame" id="boardFrame">
+          <canvas id="board" aria-label="盲棋象棋棋盘"></canvas>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </div>
+        <div class="capture-strip" id="captureStrip" role="log" aria-label="吃子记录"></div>
+        <div class="hintbar" id="hintbar">点击本方表观棋子，再点落点。</div>
+      </section>
+
+      <aside class="side-panel" aria-label="对局信息">
+        <section class="card capture-card">
+          <h2 class="card-title">吃子记录 <span class="capture-badge">常驻</span></h2>
+          <div class="capture-feed" id="captureFeed" role="log" aria-label="吃子记录"></div>
+        </section>
+        <section class="card">
+          <h2 class="card-title">对局信息</h2>
+          <div class="stat-grid">
+            <span></span><span class="head red">红方</span><span class="head black">黑方</span>
+            <span class="row-label">明子</span><span class="num" id="redUp">1</span><span class="num" id="blackUp">1</span>
+            <span class="row-label">表观暗子</span><span class="num" id="redHidden">15</span><span class="num" id="blackHidden">15</span>
+            <span class="row-label">被吃</span><span class="num" id="redLost">0</span><span class="num" id="blackLost">0</span>
+          </div>
+          <div class="meta-line"><span id="metaText">服务器对局</span><code id="seedText">seed —</code></div>
+        </section>
+        <section class="card grow">
+          <h2 class="card-title">走子记录</h2>
+          <div class="log-list" id="logList"></div>
+          <div class="meta-line"><span>PublicState · 无客户端规则</span><span id="countText">0 手</span></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="bottombar" id="bottombar" hidden>
+      <button class="btn primary" id="newBtn2" type="button">离开房间</button>
+      <button class="btn danger" id="resignBtn" type="button">认输</button>
+      <span class="spacer"></span>
+      <button class="btn ghost" id="healthBtn2" type="button">服务状态</button>
+    </footer>
+  </div>
+
+  <dialog id="onlineDialog">
+    <div class="modal narrow">
+      <h2>联机对战</h2>
+      <p class="sub">创建房间，把 6 位房间码发给对手；服务端裁判，客户端无规则引擎。</p>
+      <div class="actions" style="justify-content:flex-start">
+        <button class="btn primary" id="createRoomBtn" type="button">创建房间</button>
+      </div>
+      <div class="field-row" style="margin-top:12px">
+        <label for="roomInput">加入房间</label>
+        <input id="roomInput" maxlength="6" placeholder="6 位房间码" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="actions">
+        <button class="btn" id="joinRoomBtn" type="button">加入</button>
+        <button class="btn" id="onlineClose" type="button">关闭</button>
+      </div>
+      <p class="sub web-note" id="onlineStatus">未连接</p>
+    </div>
+  </dialog>
+  <script src="/app.js?v=19"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
